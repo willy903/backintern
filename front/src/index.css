@@ -1,0 +1,94 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+    background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 50%, #fed7aa 100%);
+  }
+
+  .dark body {
+    background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+  }
+}
+
+.main-content {
+  padding-top: 80px;
+  margin-left: 0;
+}
+
+@media (min-width: 768px) {
+  .main-content {
+    margin-left: 256px;
+  }
+}
+
+@media (min-width: 768px) {
+  .main-content {
+    padding-top: 80px;
+    margin-left: 256px;
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-orange-100 dark:bg-gray-800;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-orange-300 dark:bg-gray-600;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-orange-400 dark:bg-gray-500;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgb(251 146 60) rgb(255 237 213);
+}
+
+.dark * {
+  scrollbar-color: rgb(75 85 99) rgb(31 41 55);
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* Gradient backgrounds */
+.bg-gradient-warm {
+  background: linear-gradient(135deg, #fff7ed 0%, #fed7aa 50%, #fdba74 100%);
+}
+
+.dark .bg-gradient-warm {
+  background: linear-gradient(135deg, #1f2937 0%, #111827 50%, #0f172a 100%);
+}
+
+/* Notification dropdown animation */
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-slide-down {
+  animation: slideDown 0.2s ease-out;
+}

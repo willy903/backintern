@@ -1,0 +1,253 @@
+{
+  "metrics": {
+    "totalInterns": 248,
+    "activeProjects": 42,
+    "completedTasks": 1284,
+    "successRate": 94
+  },
+  "interns": [
+    {
+      "id": "1",
+      "name": "John Smith",
+      "email": "john.smith@email.com",
+      "department": "Engineering",
+      "avatar": "https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=64&h=64&dpr=1",
+      "status": "active",
+      "startDate": "2024-01-15",
+      "progress": 78
+    },
+    {
+      "id": "2",
+      "name": "Sarah Johnson",
+      "email": "sarah.johnson@email.com",
+      "department": "Design",
+      "avatar": "https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?auto=compress&cs=tinysrgb&w=64&h=64&dpr=1",
+      "status": "active",
+      "startDate": "2024-02-01",
+      "progress": 85
+    },
+    {
+      "id": "3",
+      "name": "Mike Chen",
+      "email": "mike.chen@email.com",
+      "department": "Marketing",
+      "avatar": "https://images.pexels.com/photos/1043471/pexels-photo-1043471.jpeg?auto=compress&cs=tinysrgb&w=64&h=64&dpr=1",
+      "status": "active",
+      "startDate": "2024-01-20",
+      "progress": 62
+    },
+    {
+      "id": "4",
+      "name": "Emma Wilson",
+      "email": "emma.wilson@email.com",
+      "department": "HR",
+      "avatar": "https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=64&h=64&dpr=1",
+      "status": "active",
+      "startDate": "2024-01-10",
+      "progress": 92
+    }
+  ],
+  "projects": [
+    {
+      "id": "1",
+      "title": "E-commerce App",
+      "description": "Développement d'une application e-commerce complète avec panier et paiement",
+      "status": "in-progress",
+      "assignedInterns": ["1", "2"],
+      "completion": 65,
+      "dueDate": "2024-03-15",
+      "priority": "high"
+    },
+    {
+      "id": "2",
+      "title": "UI Design System",
+      "description": "Création d'un système de design cohérent pour l'entreprise",
+      "status": "done",
+      "assignedInterns": ["2"],
+      "completion": 100,
+      "dueDate": "2024-02-28",
+      "priority": "medium"
+    },
+    {
+      "id": "3",
+      "title": "Mobile App",
+      "description": "Application mobile native pour iOS et Android",
+      "status": "todo",
+      "assignedInterns": ["3", "4"],
+      "completion": 15,
+      "dueDate": "2024-04-20",
+      "priority": "high"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "1",
+      "title": "Design Login Page",
+      "description": "Créer une interface de connexion moderne avec validation de formulaire",
+      "status": "done",
+      "assignedTo": "2",
+      "projectId": "1",
+      "priority": "high",
+      "dueDate": "2024-02-20",
+      "labels": ["UI", "Design"]
+    },
+    {
+      "id": "2",
+      "title": "Implement Authentication",
+      "description": "Mettre en place le système d'authentification JWT",
+      "status": "in-progress",
+      "assignedTo": "1",
+      "projectId": "1",
+      "priority": "high",
+      "dueDate": "2024-03-10",
+      "labels": ["Backend", "Security"]
+    },
+    {
+      "id": "3",
+      "title": "Database Setup",
+      "description": "Configurer la base de données PostgreSQL",
+      "status": "todo",
+      "assignedTo": "1",
+      "projectId": "1",
+      "priority": "medium",
+      "dueDate": "2024-03-15",
+      "labels": ["Database"]
+    },
+    {
+      "id": "4",
+      "title": "API Documentation",
+      "description": "Rédiger la documentation complète de l'API",
+      "status": "todo",
+      "assignedTo": "3",
+      "projectId": "1",
+      "priority": "low",
+      "dueDate": "2024-03-20",
+      "labels": ["Documentation"]
+    },
+    {
+      "id": "5",
+      "title": "Payment Integration",
+      "description": "Intégrer le système de paiement Stripe",
+      "status": "bug",
+      "assignedTo": "2",
+      "projectId": "1",
+      "priority": "high",
+      "dueDate": "2024-03-12",
+      "labels": ["Payment", "Integration"]
+    },
+    {
+      "id": "6",
+      "title": "UI Components Library",
+      "description": "Créer une bibliothèque de composants réutilisables",
+      "status": "done",
+      "assignedTo": "2",
+      "projectId": "2",
+      "priority": "medium",
+      "dueDate": "2024-02-25",
+      "labels": ["UI", "Components"]
+    },
+    {
+      "id": "7",
+      "title": "Mobile Navigation",
+      "description": "Développer la navigation mobile responsive",
+      "status": "in-progress",
+      "assignedTo": "3",
+      "projectId": "3",
+      "priority": "high",
+      "dueDate": "2024-04-05",
+      "labels": ["Mobile", "Navigation"]
+    },
+    {
+      "id": "8",
+      "title": "Push Notifications",
+      "description": "Implémenter les notifications push",
+      "status": "bug",
+      "assignedTo": "4",
+      "projectId": "3",
+      "priority": "medium",
+      "dueDate": "2024-04-10",
+      "labels": ["Mobile", "Notifications"]
+    }
+  ],
+  "activities": [
+    {
+      "id": "1",
+      "user": {
+        "name": "John Smith",
+        "avatar": "https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=64&h=64&dpr=1"
+      },
+      "action": "a soumis un rapport de projet",
+      "target": "",
+      "timestamp": "Il y a 2 heures",
+      "type": "project"
+    },
+    {
+      "id": "2",
+      "user": {
+        "name": "Sarah Johnson",
+        "avatar": "https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?auto=compress&cs=tinysrgb&w=64&h=64&dpr=1"
+      },
+      "action": "a terminé la tâche UI Design",
+      "target": "",
+      "timestamp": "Il y a 4 heures",
+      "type": "task"
+    },
+    {
+      "id": "3",
+      "user": {
+        "name": "Mike Chen",
+        "avatar": "https://images.pexels.com/photos/1043471/pexels-photo-1043471.jpeg?auto=compress&cs=tinysrgb&w=64&h=64&dpr=1"
+      },
+      "action": "a commencé le projet: E-commerce App",
+      "target": "",
+      "timestamp": "Il y a 1 jour",
+      "type": "project"
+    }
+  ],
+  "notifications": [
+    {
+      "id": "1",
+      "title": "Nouveau stagiaire ajouté",
+      "message": "Emma Wilson a rejoint l'équipe HR",
+      "type": "info",
+      "timestamp": "Il y a 1 heure",
+      "read": false
+    },
+    {
+      "id": "2",
+      "title": "Projet en retard",
+      "message": "Le projet E-commerce App a dépassé sa date limite",
+      "type": "warning",
+      "timestamp": "Il y a 3 heures",
+      "read": false
+    },
+    {
+      "id": "3",
+      "title": "Tâche terminée",
+      "message": "Sarah a terminé la tâche UI Design",
+      "type": "success",
+      "timestamp": "Il y a 5 heures",
+      "read": true
+    }
+  ],
+  "progressData": [
+    { "month": "Jan", "progress": 65, "performance": 72 },
+    { "month": "Feb", "progress": 78, "performance": 81 },
+    { "month": "Mar", "progress": 85, "performance": 89 },
+    { "month": "Apr", "progress": 92, "performance": 95 },
+    { "month": "May", "progress": 88, "performance": 91 },
+    { "month": "Jun", "progress": 94, "performance": 97 }
+  ],
+  "projectStatusData": [
+    { "name": "En attente", "value": 8, "color": "#FED7AA" },
+    { "name": "En cours", "value": 24, "color": "#93C5FD" },
+    { "name": "Terminé", "value": 10, "color": "#86EFAC" }
+  ],
+  "departmentData": [
+    { "department": "Engineering", "interns": 78 },
+    { "department": "Design", "interns": 42 },
+    { "department": "Marketing", "interns": 35 },
+    { "department": "HR", "interns": 28 },
+    { "department": "Finance", "interns": 65 }
+  ]
+}

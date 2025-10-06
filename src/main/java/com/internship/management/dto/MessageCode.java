@@ -1,0 +1,18 @@
+package com.internship.management.dto;
+
+public enum MessageCode {
+    USER_EXIST,
+    USER_NOT_FOUND,
+    INCORRECT_PASSWORD,
+    ACCOUNT_NOT_ACTIVATED,
+    ACCOUNT_DISABLED,
+
+    LOGIN_SUCCESS,
+    PASSWORD_CREATED,
+    EMAIL_CHECKED,
+
+    ADMIN_CREATED,
+    DEFAULT_ADMIN_CREATED,
+    ENCADREUR_CREATED,
+    STAGIAIRE_CREATED
+}

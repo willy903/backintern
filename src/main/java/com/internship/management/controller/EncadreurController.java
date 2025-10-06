@@ -24,6 +24,21 @@ public class EncadreurController {
         return ResponseEntity.ok(ApiResponse.success(encadreurService.getAllEncadreurs()));
     }
 
+    @GetMapping("/debug")
+    public ResponseEntity<ApiResponse<String>> debugEncadreurs() {
+        return ResponseEntity.ok(ApiResponse.success(encadreurService.getEncadreursDebugInfo()));
+    }
+
+    @GetMapping("/check/{encadreurId}")
+    public ResponseEntity<ApiResponse<String>> checkEncadreurExists(@PathVariable Long encadreurId) {
+        try {
+            String result = encadreurService.checkEncadreurExists(encadreurId);
+            return ResponseEntity.ok(ApiResponse.success(result));
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ApiResponse.error(e.getMessage()));
+        }
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<UserDTO>> getEncadreurById(@PathVariable Long id) {
         try {

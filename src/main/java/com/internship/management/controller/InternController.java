@@ -24,9 +24,15 @@ public class InternController {
     @PostMapping
     public ResponseEntity<ApiResponse<InternDTO>> createIntern(@RequestBody CreateInternRequest request) {
         try {
+            System.out.println("=== CONTROLLER: Received CreateInternRequest ===");
+            System.out.println("Raw encadreurId from request: " + request.getEncadreurId());
+            System.out.println("Request toString: " + request.toString());
+
             InternDTO intern = internService.createIntern(request);
             return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success("INTERN_CREATED", intern));
         } catch (RuntimeException e) {
+            System.out.println("ERROR in controller: " + e.getMessage());
+            e.printStackTrace();
             return ResponseEntity.badRequest().body(ApiResponse.error(e.getMessage()));
         }
     }

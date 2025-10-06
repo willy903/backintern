@@ -25,6 +25,11 @@ public class InternService {
 
     @Transactional
     public InternDTO createIntern(CreateInternRequest request) {
+        System.out.println("=== CREATE INTERN REQUEST ===");
+        System.out.println("Email: " + request.getEmail());
+        System.out.println("Encadreur ID requested: " + request.getEncadreurId());
+        System.out.println("Encadreur ID type: " + (request.getEncadreurId() != null ? request.getEncadreurId().getClass().getName() : "null"));
+
         if (userRepository.existsByEmail(request.getEmail())) {
             throw new RuntimeException("USER_EXIST");
         }
@@ -41,8 +46,21 @@ public class InternService {
 
         Encadreur encadreur = null;
         if (request.getEncadreurId() != null) {
+            System.out.println("Searching for Encadreur with ID: " + request.getEncadreurId());
+
+            List<Encadreur> allEncadreurs = encadreurRepository.findAll();
+            System.out.println("Available Encadreurs IDs: ");
+            for (Encadreur e : allEncadreurs) {
+                System.out.println("  - Encadreur ID: " + e.getId() + " (User ID: " + e.getUser().getId() + ")");
+            }
+
             encadreur = encadreurRepository.findById(request.getEncadreurId())
-                    .orElseThrow(() -> new RuntimeException("ENCADREUR_NOT_FOUND"));
+                    .orElseThrow(() -> {
+                        System.out.println("ERROR: Encadreur ID " + request.getEncadreurId() + " NOT FOUND!");
+                        return new RuntimeException("ENCADREUR_NOT_FOUND");
+                    });
+
+            System.out.println("SUCCESS: Encadreur found - ID: " + encadreur.getId());
         }
 
         Intern intern = Intern.builder()

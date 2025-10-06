@@ -136,6 +136,48 @@ public class EncadreurService {
         return (long) internRepository.findByEncadreurId(encadreurId).size();
     }
 
+    @Transactional(readOnly = true)
+    public String getEncadreursDebugInfo() {
+        List<Encadreur> allEncadreurs = encadreurRepository.findAll();
+        StringBuilder debug = new StringBuilder();
+        debug.append("=== ALL ENCADREURS IN DATABASE ===\n\n");
+
+        for (Encadreur enc : allEncadreurs) {
+            debug.append("Encadreur ID: ").append(enc.getId()).append("\n");
+            debug.append("  User ID: ").append(enc.getUser().getId()).append("\n");
+            debug.append("  Name: ").append(enc.getUser().getNom()).append(" ").append(enc.getUser().getPrenom()).append("\n");
+            debug.append("  Email: ").append(enc.getUser().getEmail()).append("\n");
+            debug.append("  Department: ").append(enc.getDepartment()).append("\n");
+            debug.append("  Created At: ").append(enc.getCreatedAt()).append("\n");
+            debug.append("---\n");
+        }
+
+        debug.append("\nTotal Encadreurs: ").append(allEncadreurs.size()).append("\n");
+        return debug.toString();
+    }
+
+    @Transactional(readOnly = true)
+    public String checkEncadreurExists(Long encadreurId) {
+        boolean exists = encadreurRepository.existsById(encadreurId);
+
+        if (exists) {
+            Encadreur enc = encadreurRepository.findById(encadreurId).get();
+            return "Encadreur ID " + encadreurId + " EXISTS!\n" +
+                   "User ID: " + enc.getUser().getId() + "\n" +
+                   "Name: " + enc.getUser().getNom() + " " + enc.getUser().getPrenom() + "\n" +
+                   "Email: " + enc.getUser().getEmail();
+        } else {
+            List<Encadreur> all = encadreurRepository.findAll();
+            StringBuilder sb = new StringBuilder();
+            sb.append("Encadreur ID ").append(encadreurId).append(" NOT FOUND!\n\n");
+            sb.append("Available Encadreur IDs:\n");
+            for (Encadreur e : all) {
+                sb.append("  - ID: ").append(e.getId()).append(" (User: ").append(e.getUser().getEmail()).append(")\n");
+            }
+            throw new RuntimeException(sb.toString());
+        }
+    }
+
     private UserDTO convertToDTO(User user) {
         Encadreur encadreur = encadreurRepository.findByUserId(user.getId()).orElse(null);
         Long encadreurId = encadreur != null ? encadreur.getId() : null;

@@ -143,6 +143,7 @@ public class EncadreurService {
 
         return UserDTO.builder()
                 .id(user.getId())
+                .encadreurId(encadreurId)
                 .email(user.getEmail())
                 .nom(user.getNom())
                 .prenom(user.getPrenom())
@@ -160,7 +161,8 @@ public class EncadreurService {
         Long internCount = encadreurId != null ? (long) internRepository.findByEncadreurId(encadreurId).size() : 0L;
 
         return UserDTO.builder()
-                .id(encadreurId)
+                .id(user.getId())
+                .encadreurId(encadreurId)
                 .email(user.getEmail())
                 .nom(user.getNom())
                 .prenom(user.getPrenom())

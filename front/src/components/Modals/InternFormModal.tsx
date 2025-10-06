@@ -39,14 +39,20 @@ export default function InternFormModal({ isOpen, onClose, onSubmit }: InternFor
     try {
       const data = await encadreurService.getAllEncadreurs();
 
+      console.log('=== ENCADREURS CHARGÉS ===');
+      console.log('Nombre d\'encadreurs:', data.length);
+      data.forEach(enc => {
+        console.log(`Encadreur: ${enc.prenom} ${enc.nom} - ID: ${enc.id} - encadreurId: ${enc.encadreurId}`);
+      });
+
       if (authUser?.role === 'ENCADREUR') {
         const storedUser = localStorage.getItem('auth_user');
         if (storedUser) {
           const userData = JSON.parse(storedUser);
-          const currentEncadreur = data.find(e => e.encadreurid === userData.id);
+          const currentEncadreur = data.find(e => e.encadreurId === userData.id);
           if (currentEncadreur) {
             setEncadreurs([currentEncadreur]);
-            setFormData(prev => ({ ...prev, encadreurId: currentEncadreur.id }));
+            setFormData(prev => ({ ...prev, encadreurId: currentEncadreur.encadreurId }));
           }
         }
       } else {
@@ -71,7 +77,25 @@ export default function InternFormModal({ isOpen, onClose, onSubmit }: InternFor
 
     try {
       setLoading(true);
-      await authService.createStagiaire(formData);
+      const requestData = {
+        email: formData.email,
+        nom: formData.nom,
+        prenom: formData.prenom,
+        phone: formData.phone,
+        departement: formData.departement,
+        school: formData.school,
+        major: formData.major,
+        startDate: formData.startDate,
+        endDate: formData.endDate,
+        encadreurId: Number(formData.encadreurId)
+      };
+
+      console.log('=== CRÉATION STAGIAIRE ===');
+      console.log('Données envoyées:', requestData);
+      console.log('encadreurId type:', typeof requestData.encadreurId);
+      console.log('encadreurId value:', requestData.encadreurId);
+
+      await authService.createStagiaire(requestData);
       onSubmit(formData);
       setFormData({
         nom: '',

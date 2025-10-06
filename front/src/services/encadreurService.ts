@@ -3,6 +3,7 @@ import { InternDTO } from './internService';
 
 export interface EncadreurDTO {
   id: number;
+  encadreurId: number;
   email: string;
   nom: string;
   prenom: string;
@@ -11,6 +12,7 @@ export interface EncadreurDTO {
   role: string;
   accountStatus: string;
   avatar: string | null;
+  internCount?: number;
 }
 
 export interface UpdateEncadreurRequest {

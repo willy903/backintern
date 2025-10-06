@@ -100,3 +100,166 @@ Pour vérifier que tout fonctionne :
 - Contient uniquement les données spécifiques aux encadreurs
 - Colonne `id` : Encadreur ID
 - Colonne `user_id` : Référence vers `users.id`
+
+---
+
+# Configuration Frontend pour l'Assignation d'Encadreur
+
+## Modifications Effectuées dans le Frontend
+
+Le formulaire d'ajout de stagiaire a été ajusté pour envoyer les bonnes données au backend via l'endpoint `/api/interns`.
+
+### 1. Changement d'Endpoint
+
+**Avant**: Utilisait `authService.createStagiaire()` qui appelait `/auth/register/stagiaire`
+
+**Après**: Utilise `internService.createIntern()` qui appelle `/api/interns`
+
+### 2. Format de Payload Corrigé
+
+Le formulaire envoie maintenant le format exact attendu par le backend:
+
+```json
+{
+  "email": "stagiaire@example.com",
+  "firstName": "Pierre",
+  "lastName": "Dubois",
+  "phone": "+212612345678",
+  "school": "Université Mohammed V",
+  "department": "Informatique",
+  "startDate": "2025-01-15",
+  "endDate": "2025-06-15",
+  "encadreurId": 3
+}
+```
+
+### 3. Mapping des Champs
+
+Le formulaire fait maintenant le mapping correct:
+
+| Champ Formulaire | Champ API | Type |
+|-----------------|-----------|------|
+| `prenom` | `firstName` | string |
+| `nom` | `lastName` | string |
+| `email` | `email` | string |
+| `phone` | `phone` | string |
+| `departement` | `department` | string |
+| `school` | `school` | string |
+| `startDate` | `startDate` | string (date) |
+| `endDate` | `endDate` | string (date) |
+| `encadreurId` | `encadreurId` | number |
+
+### 4. Suppression du Champ "Filière"
+
+Le champ `major` (Filière) a été supprimé car il n'est pas utilisé par le backend.
+
+### 5. Type EncadreurDTO Mis à Jour
+
+Ajout du champ `encadreurId` dans le type `EncadreurDTO`:
+
+```typescript
+export interface EncadreurDTO {
+  id: number;
+  encadreurId: number;  // Ajouté
+  email: string;
+  nom: string;
+  prenom: string;
+  phone: string;
+  department: string;
+  role: string;
+  accountStatus: string;
+  avatar: string | null;
+  internCount?: number;  // Ajouté
+}
+```
+
+### 6. Correction de la Lecture de l'ID Encadreur
+
+**Avant**:
+```typescript
+const currentEncadreur = data.find(e => e.encadreurid === userData.id);
+setFormData(prev => ({ ...prev, encadreurId: currentEncadreur.id }));
+```
+
+**Après**:
+```typescript
+const currentEncadreur = data.find(e => e.encadreurId === userData.id);
+setFormData(prev => ({ ...prev, encadreurId: currentEncadreur.encadreurId }));
+```
+
+### 7. Logs de Debug
+
+Des logs ont été ajoutés pour faciliter le débogage:
+
+```typescript
+console.log('=== ENCADREURS CHARGÉS ===');
+console.log('Nombre d\'encadreurs:', data.length);
+data.forEach(enc => {
+  console.log(`Encadreur: ${enc.prenom} ${enc.nom} - ID: ${enc.id} - encadreurId: ${enc.encadreurId}`);
+});
+
+console.log('=== CRÉATION STAGIAIRE ===');
+console.log('Données envoyées:', requestData);
+console.log('encadreurId type:', typeof requestData.encadreurId);
+console.log('encadreurId value:', requestData.encadreurId);
+```
+
+## Fichiers Frontend Modifiés
+
+1. **`front/src/components/Modals/InternFormModal.tsx`**
+   - Changement d'import: `authService` → `internService`
+   - Changement d'appel: `createStagiaire()` → `createIntern()`
+   - Mapping correct des champs vers le format API
+   - Suppression du champ `major`
+   - Ajout de logs de debug
+   - Correction de la casse `encadreurId`
+
+2. **`front/src/services/encadreurService.ts`**
+   - Ajout du champ `encadreurId` dans `EncadreurDTO`
+   - Ajout du champ optionnel `internCount`
+
+## Test Complet de la Fonctionnalité
+
+Pour tester que l'assignation fonctionne:
+
+1. Ouvrir la console du navigateur (F12)
+2. Cliquer sur "Ajouter un Stagiaire"
+3. Remplir le formulaire et sélectionner un encadreur
+4. Observer les logs dans la console:
+   - Liste des encadreurs chargés avec leurs IDs
+   - Données envoyées au backend
+   - Type et valeur de l'`encadreurId`
+5. Soumettre le formulaire
+6. Vérifier que le stagiaire est bien créé et assigné à l'encadreur
+
+## Endpoint Backend Utilisé
+
+**POST** `http://localhost:8080/api/interns`
+
+**Headers**:
+```
+Content-Type: application/json
+Authorization: Bearer <token>
+```
+
+**Body**:
+```json
+{
+  "email": "string",
+  "firstName": "string",
+  "lastName": "string",
+  "phone": "string",
+  "school": "string",
+  "department": "string",
+  "startDate": "YYYY-MM-DD",
+  "endDate": "YYYY-MM-DD",
+  "encadreurId": number
+}
+```
+
+## Notes Importantes
+
+- L'`encadreurId` doit correspondre à l'ID de la table `encadreurs` (pas l'ID user)
+- Le champ est obligatoire et doit être un nombre (pas une chaîne)
+- Le backend valide que l'encadreur existe avant de créer le stagiaire
+- Avec les corrections du cache Hibernate, tous les encadreurs devraient maintenant fonctionner

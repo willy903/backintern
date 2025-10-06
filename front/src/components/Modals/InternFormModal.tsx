@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { X, User, Mail, Building, Calendar, GraduationCap, BookOpen } from 'lucide-react';
-import { authService } from '../../services/authService';
+import { X, User, Mail, Building, Calendar, GraduationCap } from 'lucide-react';
+import { internService } from '../../services/internService';
 import { encadreurService } from '../../services/encadreurService';
 import { useApiError } from '../../hooks/useApiError';
 import { useAuth } from '../../contexts/AuthContext';
@@ -19,7 +19,6 @@ export default function InternFormModal({ isOpen, onClose, onSubmit }: InternFor
     phone: '',
     departement: '',
     school: '',
-    major: '',
     startDate: '',
     endDate: '',
     encadreurId: 0
@@ -69,7 +68,7 @@ export default function InternFormModal({ isOpen, onClose, onSubmit }: InternFor
     e.preventDefault();
 
     if (!formData.nom || !formData.prenom || !formData.email || !formData.phone ||
-        !formData.departement || !formData.school || !formData.major ||
+        !formData.departement || !formData.school ||
         !formData.startDate || !formData.endDate || !formData.encadreurId) {
       alert('Tous les champs sont obligatoires');
       return;
@@ -79,12 +78,11 @@ export default function InternFormModal({ isOpen, onClose, onSubmit }: InternFor
       setLoading(true);
       const requestData = {
         email: formData.email,
-        nom: formData.nom,
-        prenom: formData.prenom,
+        firstName: formData.prenom,
+        lastName: formData.nom,
         phone: formData.phone,
-        departement: formData.departement,
         school: formData.school,
-        major: formData.major,
+        department: formData.departement,
         startDate: formData.startDate,
         endDate: formData.endDate,
         encadreurId: Number(formData.encadreurId)
@@ -95,7 +93,7 @@ export default function InternFormModal({ isOpen, onClose, onSubmit }: InternFor
       console.log('encadreurId type:', typeof requestData.encadreurId);
       console.log('encadreurId value:', requestData.encadreurId);
 
-      await authService.createStagiaire(requestData);
+      await internService.createIntern(requestData);
       onSubmit(formData);
       setFormData({
         nom: '',
@@ -104,7 +102,6 @@ export default function InternFormModal({ isOpen, onClose, onSubmit }: InternFor
         phone: '',
         departement: '',
         school: '',
-        major: '',
         startDate: '',
         endDate: '',
         encadreurId: 0
@@ -199,36 +196,19 @@ export default function InternFormModal({ isOpen, onClose, onSubmit }: InternFor
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                <GraduationCap className="h-4 w-4 inline mr-1" />
-                École *
-              </label>
-              <input
-                type="text"
-                required
-                value={formData.school}
-                onChange={(e) => setFormData(prev => ({ ...prev, school: e.target.value }))}
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                placeholder="Ex: Université Paris"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                <BookOpen className="h-4 w-4 inline mr-1" />
-                Filière *
-              </label>
-              <input
-                type="text"
-                required
-                value={formData.major}
-                onChange={(e) => setFormData(prev => ({ ...prev, major: e.target.value }))}
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                placeholder="Ex: Informatique"
-              />
-            </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <GraduationCap className="h-4 w-4 inline mr-1" />
+              École *
+            </label>
+            <input
+              type="text"
+              required
+              value={formData.school}
+              onChange={(e) => setFormData(prev => ({ ...prev, school: e.target.value }))}
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+              placeholder="Ex: Université Mohammed V"
+            />
           </div>
 
           <div>

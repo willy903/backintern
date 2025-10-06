@@ -1,0 +1,1853 @@
+{
+  "info": {
+    "name": "Internship Management API - Tests Complets Normalisés",
+    "description": "Collection complète de tests pour l'API de gestion de stages avec structure normalisée",
+    "version": "3.0.0",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080",
+      "type": "default"
+    },
+    {
+      "key": "token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "adminUserId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "encadreurId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "internId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "projectId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "taskId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "departmentId",
+      "value": "1",
+      "type": "default"
+    },
+    {
+      "key": "schoolId",
+      "value": "1",
+      "type": "default"
+    }
+  ],
+  "item": [
+    {
+      "name": "1. Initialisation & Authentification",
+      "description": "Tests d'initialisation du système et d'authentification",
+      "item": [
+        {
+          "name": "1.1 Init Admin par Défaut",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 201', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "pm.test('Response has success message', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('success', true);",
+                  "});",
+                  "",
+                  "// Sauvegarder les credentials admin",
+                  "pm.collectionVariables.set('adminEmail', 'admin@internship.com');",
+                  "pm.collectionVariables.set('adminPassword', 'Admin@2024');"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/init-admin",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "init-admin"]
+            },
+            "description": "Crée le compte administrateur par défaut avec email: admin@internship.com et mot de passe: Admin@2024"
+          }
+        },
+        {
+          "name": "1.2 Login Admin",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response has token', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('token');",
+                  "    pm.expect(jsonData.token).to.be.a('string').and.not.empty;",
+                  "    ",
+                  "    // Sauvegarder le token",
+                  "    pm.collectionVariables.set('token', jsonData.token);",
+                  "});",
+                  "",
+                  "pm.test('Response has user info', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('user');",
+                  "    pm.expect(jsonData.user).to.have.property('id');",
+                  "    pm.expect(jsonData.user).to.have.property('email', 'admin@internship.com');",
+                  "    pm.expect(jsonData.user).to.have.property('role', 'ADMIN');",
+                  "    ",
+                  "    // Sauvegarder l'ID utilisateur",
+                  "    pm.collectionVariables.set('adminUserId', jsonData.user.id);",
+                  "});",
+                  "",
+                  "pm.test('Response time is less than 500ms', function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(500);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@internship.com\",\n  \"password\": \"Admin@2024\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "login"]
+            },
+            "description": "Connexion avec le compte admin par défaut"
+          }
+        },
+        {
+          "name": "1.3 Vérifier Email (Existe)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Email exists', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('exists', true);",
+                  "    pm.expect(jsonData).to.have.property('hasPassword', true);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@internship.com\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/check-email",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "check-email"]
+            },
+            "description": "Vérifie si un email existe dans le système"
+          }
+        },
+        {
+          "name": "1.4 Vérifier Email (N'existe pas)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Email does not exist', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('exists', false);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"nonexistent@example.com\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/check-email",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "check-email"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Gestion des Encadreurs",
+      "description": "Tests CRUD complets pour les encadreurs",
+      "item": [
+        {
+          "name": "2.1 Créer Encadreur",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 201', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "pm.test('Encadreur created successfully', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('id');",
+                  "    pm.expect(jsonData).to.have.property('email', 'encadreur.test@example.com');",
+                  "    pm.expect(jsonData.user).to.have.property('role', 'ENCADREUR');",
+                  "    ",
+                  "    // Sauvegarder l'ID",
+                  "    pm.collectionVariables.set('encadreurId', jsonData.id);",
+                  "});",
+                  "",
+                  "pm.test('Has department info', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('department');",
+                  "    pm.expect(jsonData).to.have.property('specialization');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"encadreur.test@example.com\",\n  \"nom\": \"Bennani\",\n  \"prenom\": \"Karim\",\n  \"phone\": \"+212661234567\",\n  \"departement\": \"IT\",\n  \"specialization\": \"Développement Full Stack\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/register/encadreur",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "register", "encadreur"]
+            },
+            "description": "Créer un nouvel encadreur dans le système"
+          }
+        },
+        {
+          "name": "2.2 Lister tous les Encadreurs",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response is an array', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.be.an('array');",
+                  "    pm.expect(jsonData.length).to.be.at.least(1);",
+                  "});",
+                  "",
+                  "pm.test('Each encadreur has required fields', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    jsonData.forEach(function(encadreur) {",
+                  "        pm.expect(encadreur).to.have.property('id');",
+                  "        pm.expect(encadreur).to.have.property('user');",
+                  "        pm.expect(encadreur).to.have.property('department');",
+                  "    });",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/encadreurs",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "encadreurs"]
+            },
+            "description": "Récupérer la liste de tous les encadreurs"
+          }
+        },
+        {
+          "name": "2.3 Obtenir Encadreur par ID",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response has correct encadreur', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('id', parseInt(pm.collectionVariables.get('encadreurId')));",
+                  "    pm.expect(jsonData.user).to.have.property('email', 'encadreur.test@example.com');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/encadreurs/{{encadreurId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "encadreurs", "{{encadreurId}}"]
+            },
+            "description": "Récupérer les détails d'un encadreur spécifique"
+          }
+        },
+        {
+          "name": "2.4 Mettre à jour Encadreur",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Encadreur updated successfully', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('specialization', 'Data Science & IA');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"specialization\": \"Data Science & IA\",\n  \"phone\": \"+212662345678\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/encadreurs/{{encadreurId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "encadreurs", "{{encadreurId}}"]
+            },
+            "description": "Mettre à jour les informations d'un encadreur"
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Gestion des Stagiaires",
+      "description": "Tests CRUD complets pour les stagiaires",
+      "item": [
+        {
+          "name": "3.1 Créer Stagiaire",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 201', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "pm.test('Intern created successfully', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('id');",
+                  "    pm.expect(jsonData).to.have.property('firstName', 'Amina');",
+                  "    pm.expect(jsonData).to.have.property('lastName', 'El Alami');",
+                  "    ",
+                  "    // Sauvegarder l'ID",
+                  "    pm.collectionVariables.set('internId', jsonData.id);",
+                  "});",
+                  "",
+                  "pm.test('Has required fields', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('school');",
+                  "    pm.expect(jsonData).to.have.property('department');",
+                  "    pm.expect(jsonData).to.have.property('startDate');",
+                  "    pm.expect(jsonData).to.have.property('endDate');",
+                  "    pm.expect(jsonData).to.have.property('status');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"stagiaire.test@example.com\",\n  \"firstName\": \"Amina\",\n  \"lastName\": \"El Alami\",\n  \"phone\": \"+212671234567\",\n  \"school\": \"ENSIAS\",\n  \"department\": \"Informatique\",\n  \"startDate\": \"2025-02-01\",\n  \"endDate\": \"2025-07-31\",\n  \"encadreurId\": null\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/interns",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "interns"]
+            },
+            "description": "Créer un nouveau stagiaire dans le système"
+          }
+        },
+        {
+          "name": "3.2 Lister tous les Stagiaires",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response is an array', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.be.an('array');",
+                  "    pm.expect(jsonData.length).to.be.at.least(1);",
+                  "});",
+                  "",
+                  "pm.test('Each intern has required fields', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    jsonData.forEach(function(intern) {",
+                  "        pm.expect(intern).to.have.property('id');",
+                  "        pm.expect(intern).to.have.property('firstName');",
+                  "        pm.expect(intern).to.have.property('lastName');",
+                  "        pm.expect(intern).to.have.property('status');",
+                  "    });",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/interns",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "interns"]
+            },
+            "description": "Récupérer la liste de tous les stagiaires"
+          }
+        },
+        {
+          "name": "3.3 Obtenir Stagiaire par ID",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response has correct intern', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('id', parseInt(pm.collectionVariables.get('internId')));",
+                  "    pm.expect(jsonData).to.have.property('email', 'stagiaire.test@example.com');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/interns/{{internId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "interns", "{{internId}}"]
+            },
+            "description": "Récupérer les détails d'un stagiaire spécifique"
+          }
+        },
+        {
+          "name": "3.4 Assigner Encadreur au Stagiaire",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Encadreur assigned successfully', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('encadreurId', parseInt(pm.collectionVariables.get('encadreurId')));",
+                  "    pm.expect(jsonData).to.have.property('status', 'ACTIVE');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"encadreurId\": {{encadreurId}},\n  \"status\": \"ACTIVE\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/interns/{{internId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "interns", "{{internId}}"]
+            },
+            "description": "Assigner un encadreur à un stagiaire et activer le stage"
+          }
+        },
+        {
+          "name": "3.5 Créer Mot de Passe Stagiaire",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Password created successfully', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('token');",
+                  "    pm.expect(jsonData.user).to.have.property('accountStatus', 'ACTIVE');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"stagiaire.test@example.com\",\n  \"password\": \"Stagiaire@2024\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/create-password",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "create-password"]
+            },
+            "description": "Le stagiaire crée son mot de passe pour activer son compte"
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. Gestion des Projets",
+      "description": "Tests CRUD complets pour les projets",
+      "item": [
+        {
+          "name": "4.1 Créer Projet",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 201', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "pm.test('Project created successfully', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('id');",
+                  "    pm.expect(jsonData).to.have.property('name');",
+                  "    pm.expect(jsonData).to.have.property('status');",
+                  "    ",
+                  "    // Sauvegarder l'ID",
+                  "    pm.collectionVariables.set('projectId', jsonData.id);",
+                  "});",
+                  "",
+                  "pm.test('Has required fields', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('startDate');",
+                  "    pm.expect(jsonData).to.have.property('endDate');",
+                  "    pm.expect(jsonData).to.have.property('description');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Application Web de Gestion de Stages\",\n  \"description\": \"Développement d'une plateforme complète pour la gestion des stages avec suivi en temps réel\",\n  \"startDate\": \"2025-02-01\",\n  \"endDate\": \"2025-07-31\",\n  \"status\": \"PLANNING\",\n  \"internIds\": [],\n  \"encadreurId\": null\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/projects",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "projects"]
+            },
+            "description": "Créer un nouveau projet dans le système"
+          }
+        },
+        {
+          "name": "4.2 Lister tous les Projets",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response is an array', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.be.an('array');",
+                  "    pm.expect(jsonData.length).to.be.at.least(1);",
+                  "});",
+                  "",
+                  "pm.test('Each project has required fields', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    jsonData.forEach(function(project) {",
+                  "        pm.expect(project).to.have.property('id');",
+                  "        pm.expect(project).to.have.property('name');",
+                  "        pm.expect(project).to.have.property('status');",
+                  "    });",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/projects",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "projects"]
+            },
+            "description": "Récupérer la liste de tous les projets"
+          }
+        },
+        {
+          "name": "4.3 Obtenir Projet par ID",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response has correct project', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('id', parseInt(pm.collectionVariables.get('projectId')));",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/projects/{{projectId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "projects", "{{projectId}}"]
+            },
+            "description": "Récupérer les détails d'un projet spécifique"
+          }
+        },
+        {
+          "name": "4.4 Assigner Encadreur au Projet",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Encadreur assigned successfully', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('encadreurId', parseInt(pm.collectionVariables.get('encadreurId')));",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"encadreurId\": {{encadreurId}}\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/projects/{{projectId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "projects", "{{projectId}}"]
+            },
+            "description": "Assigner un encadreur responsable au projet"
+          }
+        },
+        {
+          "name": "4.5 Assigner Stagiaire au Projet",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Intern assigned to project', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('projectId', parseInt(pm.collectionVariables.get('projectId')));",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"projectId\": {{projectId}}\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/interns/{{internId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "interns", "{{internId}}"]
+            },
+            "description": "Assigner le stagiaire à un projet"
+          }
+        },
+        {
+          "name": "4.6 Changer Statut Projet",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Status changed successfully', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('status', 'IN_PROGRESS');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"IN_PROGRESS\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/projects/{{projectId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "projects", "{{projectId}}"]
+            },
+            "description": "Changer le statut du projet"
+          }
+        }
+      ]
+    },
+    {
+      "name": "5. Gestion des Tâches",
+      "description": "Tests CRUD complets pour les tâches",
+      "item": [
+        {
+          "name": "5.1 Créer Tâche",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 201', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "pm.test('Task created successfully', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('id');",
+                  "    pm.expect(jsonData).to.have.property('title');",
+                  "    pm.expect(jsonData).to.have.property('status');",
+                  "    pm.expect(jsonData).to.have.property('priority');",
+                  "    ",
+                  "    // Sauvegarder l'ID",
+                  "    pm.collectionVariables.set('taskId', jsonData.id);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Configuration de l'environnement de développement\",\n  \"description\": \"Installer et configurer tous les outils nécessaires: IDE, Git, Node.js, MySQL\",\n  \"status\": \"TODO\",\n  \"priority\": \"HIGH\",\n  \"dueDate\": \"2025-02-10\",\n  \"projectId\": {{projectId}},\n  \"assignedToId\": null\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/tasks",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "tasks"]
+            },
+            "description": "Créer une nouvelle tâche dans le système"
+          }
+        },
+        {
+          "name": "5.2 Créer Tâche - Authentification Backend",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 201', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Implémenter l'authentification JWT\",\n  \"description\": \"Créer le système d'authentification avec JWT pour sécuriser l'API\",\n  \"status\": \"TODO\",\n  \"priority\": \"HIGH\",\n  \"dueDate\": \"2025-02-20\",\n  \"projectId\": {{projectId}},\n  \"assignedToId\": {{internId}}\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/tasks",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "tasks"]
+            }
+          }
+        },
+        {
+          "name": "5.3 Créer Tâche - Frontend React",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 201', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Développer le dashboard React\",\n  \"description\": \"Créer l'interface utilisateur du dashboard avec React et TailwindCSS\",\n  \"status\": \"TODO\",\n  \"priority\": \"MEDIUM\",\n  \"dueDate\": \"2025-03-15\",\n  \"projectId\": {{projectId}},\n  \"assignedToId\": {{internId}}\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/tasks",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "tasks"]
+            }
+          }
+        },
+        {
+          "name": "5.4 Lister toutes les Tâches",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response is an array', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.be.an('array');",
+                  "    pm.expect(jsonData.length).to.be.at.least(1);",
+                  "});",
+                  "",
+                  "pm.test('Each task has required fields', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    jsonData.forEach(function(task) {",
+                  "        pm.expect(task).to.have.property('id');",
+                  "        pm.expect(task).to.have.property('title');",
+                  "        pm.expect(task).to.have.property('status');",
+                  "        pm.expect(task).to.have.property('priority');",
+                  "    });",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/tasks",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "tasks"]
+            },
+            "description": "Récupérer la liste de toutes les tâches"
+          }
+        },
+        {
+          "name": "5.5 Obtenir Tâche par ID",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response has correct task', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('id', parseInt(pm.collectionVariables.get('taskId')));",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/tasks/{{taskId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "tasks", "{{taskId}}"]
+            },
+            "description": "Récupérer les détails d'une tâche spécifique"
+          }
+        },
+        {
+          "name": "5.6 Changer Statut Tâche (IN_PROGRESS)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Status changed to IN_PROGRESS', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('status', 'IN_PROGRESS');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"IN_PROGRESS\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/tasks/{{taskId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "tasks", "{{taskId}}"]
+            },
+            "description": "Changer le statut d'une tâche vers IN_PROGRESS"
+          }
+        },
+        {
+          "name": "5.7 Changer Statut Tâche (DONE)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Status changed to DONE', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('status', 'DONE');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"DONE\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/tasks/{{taskId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "tasks", "{{taskId}}"]
+            },
+            "description": "Marquer une tâche comme terminée"
+          }
+        }
+      ]
+    },
+    {
+      "name": "6. Dashboard & Statistiques",
+      "description": "Tests des endpoints de dashboard et statistiques",
+      "item": [
+        {
+          "name": "6.1 Obtenir Métriques Dashboard",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Has dashboard metrics', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('totalInterns');",
+                  "    pm.expect(jsonData).to.have.property('totalProjects');",
+                  "    pm.expect(jsonData).to.have.property('totalEncadreurs');",
+                  "    pm.expect(jsonData).to.have.property('totalTasks');",
+                  "});",
+                  "",
+                  "pm.test('Metrics have valid values', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.totalInterns).to.be.a('number');",
+                  "    pm.expect(jsonData.totalProjects).to.be.a('number');",
+                  "    pm.expect(jsonData.totalEncadreurs).to.be.a('number');",
+                  "    pm.expect(jsonData.totalTasks).to.be.a('number');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/dashboard/metrics",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "dashboard", "metrics"]
+            },
+            "description": "Obtenir les métriques principales du dashboard"
+          }
+        }
+      ]
+    },
+    {
+      "name": "7. Notifications",
+      "description": "Tests du système de notifications",
+      "item": [
+        {
+          "name": "7.1 Lister Notifications Utilisateur",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response is an array', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.be.an('array');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/notifications",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "notifications"]
+            },
+            "description": "Lister toutes les notifications de l'utilisateur connecté"
+          }
+        },
+        {
+          "name": "7.2 Lister Notifications Non Lues",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('All notifications are unread', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    if (jsonData.length > 0) {",
+                  "        jsonData.forEach(function(notif) {",
+                  "            pm.expect(notif.read).to.equal(false);",
+                  "        });",
+                  "    }",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/notifications?read=false",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "notifications"],
+              "query": [
+                {
+                  "key": "read",
+                  "value": "false"
+                }
+              ]
+            },
+            "description": "Lister uniquement les notifications non lues"
+          }
+        }
+      ]
+    },
+    {
+      "name": "8. Historique des Activités",
+      "description": "Tests de l'historique des actions",
+      "item": [
+        {
+          "name": "8.1 Lister Historique des Activités",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response is an array', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.be.an('array');",
+                  "});",
+                  "",
+                  "pm.test('Each activity has required fields', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    if (jsonData.length > 0) {",
+                  "        jsonData.forEach(function(activity) {",
+                  "            pm.expect(activity).to.have.property('id');",
+                  "            pm.expect(activity).to.have.property('action');",
+                  "            pm.expect(activity).to.have.property('entityType');",
+                  "            pm.expect(activity).to.have.property('timestamp');",
+                  "        });",
+                  "    }",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/activities",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "activities"]
+            },
+            "description": "Récupérer l'historique de toutes les activités"
+          }
+        },
+        {
+          "name": "8.2 Lister Activités Récentes (Limit 10)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response has max 10 items', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.length).to.be.at.most(10);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/activities?limit=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "activities"],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            },
+            "description": "Récupérer les 10 dernières activités"
+          }
+        }
+      ]
+    },
+    {
+      "name": "9. Tests de Sécurité",
+      "description": "Tests de sécurité et gestion des erreurs",
+      "item": [
+        {
+          "name": "9.1 Accès Non Autorisé (Sans Token)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 401 or 403', function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([401, 403]);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/interns",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "interns"]
+            },
+            "description": "Tenter d'accéder à une ressource protégée sans token"
+          }
+        },
+        {
+          "name": "9.2 Token Invalide",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 401 or 403', function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([401, 403]);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "invalid.token.here",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/interns",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "interns"]
+            },
+            "description": "Tenter d'accéder avec un token invalide"
+          }
+        },
+        {
+          "name": "9.3 Ressource Inexistante",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 404', function () {",
+                  "    pm.response.to.have.status(404);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/interns/999999",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "interns", "999999"]
+            },
+            "description": "Tenter d'accéder à une ressource qui n'existe pas"
+          }
+        },
+        {
+          "name": "9.4 Données Invalides (Email Invalide)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 400', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"email-invalide\",\n  \"firstName\": \"Test\",\n  \"lastName\": \"User\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/interns",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "interns"]
+            },
+            "description": "Tenter de créer un stagiaire avec un email invalide"
+          }
+        }
+      ]
+    },
+    {
+      "name": "10. Tests de Performance",
+      "description": "Tests de performance et temps de réponse",
+      "item": [
+        {
+          "name": "10.1 Performance - Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Response time is less than 300ms', function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(300);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@internship.com\",\n  \"password\": \"Admin@2024\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "login"]
+            },
+            "description": "Tester le temps de réponse du login"
+          }
+        },
+        {
+          "name": "10.2 Performance - Liste Stagiaires",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Response time is less than 500ms', function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(500);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/interns",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "interns"]
+            },
+            "description": "Tester le temps de réponse de la liste des stagiaires"
+          }
+        }
+      ]
+    }
+  ]
+}
